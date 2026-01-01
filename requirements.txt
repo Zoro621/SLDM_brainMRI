@@ -1,0 +1,43 @@
+# SBLDM - Slice-By-Slice Lightweight Latent Diffusion Model
+# PyTorch Implementation for Kaggle T4/P100
+
+# Core
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Image processing
+Pillow>=9.5.0
+opencv-python-headless>=4.7.0
+scikit-image>=0.21.0
+
+# Training utilities
+tqdm>=4.65.0
+tensorboard>=2.13.0
+
+# Configuration
+PyYAML>=6.0
+omegaconf>=2.3.0
+
+# Metrics
+pytorch-fid>=0.3.0  # FID computation (optional - we have fallback)
+lpips>=0.1.4  # Perceptual similarity (optional)
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Kaggle/Jupyter
+ipywidgets>=8.0.0
+jupyter>=1.0.0
+
+# Data handling
+pandas>=2.0.0
+h5py>=3.8.0  # For efficient data storage
+
+# Reproducibility
+einops>=0.6.0  # Tensor operations
+
+# Optional: Weights & Biases logging
+# wandb>=0.15.0

@@ -1,0 +1,44 @@
+[
+  {
+    "Model": "FLAIR",
+    "Dataset Size": 31938,
+    "VAE Epochs": 100,
+    "VAE Train Loss": "0.004564",
+    "VAE Best Val": "0.003627",
+    "VAE Final Val": "0.003627",
+    "VAE Final LR": "0.000002",
+    "Diff Steps": 1000,
+    "Diff Initial": "61.2176",
+    "Diff Final": "10.7253",
+    "Diff Reduction": "82.5%",
+    "Diff Best Val": "10.3543"
+  },
+  {
+    "Model": "T1ce",
+    "Dataset Size": 8149,
+    "VAE Epochs": 100,
+    "VAE Train Loss": "0.007113",
+    "VAE Best Val": "0.006168",
+    "VAE Final Val": "0.006168",
+    "VAE Final LR": "0.000002",
+    "Diff Steps": 2000,
+    "Diff Initial": "61.2757",
+    "Diff Final": "3.1671",
+    "Diff Reduction": "94.8%",
+    "Diff Best Val": "2.6721"
+  },
+  {
+    "Model": "Kaggle",
+    "Dataset Size": 1616,
+    "VAE Epochs": 201,
+    "VAE Train Loss": "0.029470",
+    "VAE Best Val": "0.029737",
+    "VAE Final Val": "0.030118",
+    "VAE Final LR": "0.000001",
+    "Diff Steps": 1000,
+    "Diff Initial": "61.0405",
+    "Diff Final": "8.3467",
+    "Diff Reduction": "86.3%",
+    "Diff Best Val": "7.8421"
+  }
+]

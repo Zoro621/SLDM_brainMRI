@@ -1,0 +1,147 @@
+# =============================================================================
+# SBLDM Configuration - Full Training Run
+# Target: Kaggle T4/P100 (16GB VRAM)
+# Resolution: 128x128 grayscale brain MRI slices
+# =============================================================================
+
+# Experiment settings
+experiment:
+  name: "sbldm_kaggle_full_8x_lat8"
+  seed: 42
+  output_dir: "./outputs_kaggle_full_lat8x"
+  log_dir: "./logs_kaggle_full_lat8x"
+  checkpoint_dir: "./checkpoints_kaggle_full_lat8x"
+  
+# Data configuration
+data:
+  dataset: "brain_tumor"
+  data_dir: "./data/processed"
+  resolution: 128
+  channels: 1  # grayscale
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  num_workers: 0  # Windows optimal
+  pin_memory: true
+  
+# VAE configuration
+vae:
+  in_channels: 1
+  latent_channels: 8
+  hidden_dims: [32, 64, 128, 256]
+  downsample_factor: 8  # Derived as 2^(len(hidden_dims)-1); 4 stages -> 128 -> 16 latent
+  
+  # Training
+  batch_size: 32
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  epochs: 300
+  
+  # Loss weights
+  kl_weight: 1.0e-5
+  kl_anneal: true
+  kl_anneal_epochs: 20
+  perceptual_weight: 0.0  # Set >0 to use perceptual loss
+  
+  # Optimization
+  scheduler: "cosine"
+  warmup_epochs: 5
+  gradient_clip: 1.0
+  
+# UNet configuration
+unet:
+  in_channels: 8  # Must match VAE latent_channels
+  out_channels: 8
+  model_channels: 64
+  channel_mult: [1, 2, 4]  # Results in [64, 128, 256]
+  num_res_blocks: 2
+  attention_resolutions: [8]  # Attention at 8x8 spatial
+  dropout: 0.1
+  use_scale_shift_norm: true
+  
+# Diffusion configuration
+diffusion:
+  timesteps: 1000
+  
+  # Beta schedule: "linear", "cosine", "gamma_rebalanced"
+  beta_schedule: "cosine"
+  beta_start: 1.0e-4
+  beta_end: 0.02
+  
+  # Noise rebalancing (only used if beta_schedule="gamma_rebalanced")
+  gamma: 1.0  # <1: gentler, =1: linear, >1: aggressive
+  
+  # Loss configuration
+  loss_type: "mse"  # "mse" or "l1"
+  
+  # Novel: Frequency-aware loss
+  use_freq_loss: true
+  freq_loss_weight: 0.1
+  freq_loss_type: "mse"  # "mse" or "l1"
+  
+  # Novel: Latent CutMix augmentation
+  use_latent_cutmix: true
+  cutmix_prob: 0.25
+  cutmix_alpha: 1.0
+  
+  # Training
+  batch_size: 16
+  learning_rate: 2.0e-4
+  weight_decay: 0.0
+  training_steps: 500000  # Extended training for 500k steps
+  
+  # Optimization
+  scheduler: "cosine"
+  warmup_steps: 1000
+  gradient_clip: 1.0
+  ema_decay: 0.9999
+  
+  # Logging
+  log_interval: 100
+  sample_interval: 2000
+  save_interval: 5000
+  
+# Sampling configuration
+sampling:
+  # Sampler: "ddpm", "ddim"
+  sampler: "ddim"
+  ddim_steps: 50
+  ddim_eta: 0.0  # 0 = deterministic
+  
+  # Novel: Adaptive sampling
+  use_adaptive_sampling: true
+  adaptive_threshold: 0.05
+  adaptive_min_steps: 20
+  
+  # Generation
+  num_samples: 16
+  batch_size: 8
+  
+# Evaluation configuration
+eval:
+  # Metrics
+  compute_fid: true
+  fid_num_samples: 1000
+  compute_ssim: true
+  compute_psnr: true
+  compute_lpips: false  # Requires lpips package
+  
+  # Visualization
+  save_samples: true
+  save_reconstructions: true
+  save_error_heatmaps: true
+  num_visualize: 16
+  
+# Hardware optimization
+hardware:
+  mixed_precision: true
+  channels_last: true
+  compile_model: false  # torch.compile (PyTorch 2.0+)
+  gradient_checkpointing: false
+  
+# Checkpointing
+checkpoint:
+  save_best: true
+  save_last: false
+  resume: null  # Path to checkpoint to resume from
+  keep_last_n: 3

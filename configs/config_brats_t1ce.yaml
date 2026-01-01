@@ -1,0 +1,143 @@
+# =============================================================================
+# SBLDM Configuration - BraTS Dataset (Full Training)
+# Target: Local GPU (RTX 3060 6GB) or Kaggle T4/P100
+# Resolution: 128x128 grayscale brain MRI slices (T2-FLAIR)
+# =============================================================================
+
+# Experiment settings
+experiment:
+  name: "sbldm_brats_t1ce_128"
+  seed: 42
+  output_dir: "./outputs_brats_t1ce"
+  log_dir: "./logs_brats_t1ce"
+  checkpoint_dir: "./checkpoints_brats_t1ce"
+  
+# Data configuration
+data:
+  dataset: "brats_t1ce"
+  data_dir: "./data/brats_t1ce_processed"  # BraTS T1ce processed data
+  resolution: 128
+  channels: 1  # grayscale
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  num_workers: 0  # Use 0 on Windows to avoid multiprocessing overhead
+  pin_memory: true
+  max_samples: 8149  # T1ce dataset size
+  
+# VAE configuration
+vae:
+  in_channels: 1
+  latent_channels: 4
+  hidden_dims: [32, 64, 128, 256]
+  downsample_factor: 4  # 128 -> 32 latent spatial size
+  
+  # Training
+  batch_size: 32  # Doubled batch size (fits in 6GB)
+  learning_rate: 2.0e-4  # Scale LR with batch size
+  weight_decay: 1.0e-5
+  epochs: 100  # Fewer epochs with larger batch
+  
+  # Loss weights
+  kl_weight: 1.0e-6  # Start very small, anneal up
+  kl_anneal: true
+  kl_anneal_epochs: 20  # Longer annealing for stability
+  perceptual_weight: 0.0
+  
+  # Optimization
+  scheduler: "cosine"
+  warmup_epochs: 5
+  gradient_clip: 1.0
+  
+# UNet configuration
+unet:
+  in_channels: 4
+  out_channels: 4
+  model_channels: 64
+  channel_mult: [1, 2, 4]
+  num_res_blocks: 2
+  attention_resolutions: [8]
+  dropout: 0.1
+  use_scale_shift_norm: true
+  
+# Diffusion configuration
+diffusion:
+  timesteps: 1000
+  
+  # Beta schedule
+  beta_schedule: "cosine"
+  beta_start: 1.0e-4
+  beta_end: 0.02
+  
+  # Gamma rebalancing (if using gamma_rebalanced schedule)
+  gamma: 0.75
+  
+  # Loss
+  loss_type: "mse"
+  
+  # Frequency-aware loss
+  use_freq_loss: true
+  freq_loss_weight: 0.1
+  freq_loss_type: "mse"
+  
+  # Latent CutMix
+  use_latent_cutmix: true
+  cutmix_prob: 0.25
+  cutmix_alpha: 1.0
+  
+  # Training
+  batch_size: 16
+  learning_rate: 2.0e-4
+  weight_decay: 0.0
+  training_steps: 200000  # Extended training for better quality
+  
+  # Optimization
+  scheduler: "cosine"
+  warmup_steps: 1000
+  gradient_clip: 1.0
+  ema_decay: 0.9999
+  
+  # Logging
+  log_interval: 100
+  sample_interval: 2000
+  save_interval: 5000
+  
+# Sampling configuration
+sampling:
+  sampler: "ddim"
+  ddim_steps: 50
+  ddim_eta: 0.0
+  
+  use_adaptive_sampling: true
+  adaptive_threshold: 0.05
+  adaptive_min_steps: 20
+  
+  num_samples: 16
+  batch_size: 8
+  
+# Evaluation configuration
+eval:
+  compute_fid: true
+  fid_num_samples: 1000
+  compute_ssim: true
+  compute_psnr: true
+  compute_lpips: false
+  
+  save_samples: true
+  save_reconstructions: true
+  save_error_heatmaps: true
+  num_visualize: 16
+  
+# Hardware optimization
+hardware:
+  mixed_precision: true  # Re-enable for 2x speedup (now stable)
+  channels_last: true    # Memory layout optimization
+  compile_model: false
+  gradient_checkpointing: false
+  
+# Checkpointing
+checkpoint:
+  save_best: true
+  save_last: false
+  resume: null
+  keep_last_n: 3

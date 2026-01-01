@@ -1,0 +1,133 @@
+# =============================================================================
+# SBLDM Configuration - Medium Training Run
+# Target: Kaggle T4/P100, 4-6 hour session
+# Resolution: 128x128 with ablations enabled
+# =============================================================================
+
+# Experiment settings
+experiment:
+  name: "sbldm_medium_ablation"
+  seed: 42
+  output_dir: "./outputs_medium"
+  log_dir: "./logs_medium"
+  checkpoint_dir: "./checkpoints_medium"
+  
+# Data configuration
+data:
+  dataset: "brats"
+  data_dir: "./data/processed"
+  resolution: 128
+  channels: 1
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  num_workers: 2
+  pin_memory: true
+  
+# VAE configuration
+vae:
+  in_channels: 1
+  latent_channels: 4
+  hidden_dims: [32, 64, 128, 256]
+  downsample_factor: 4
+  
+  batch_size: 32
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  epochs: 50
+  
+  kl_weight: 1.0e-5
+  kl_anneal: true
+  kl_anneal_epochs: 10
+  perceptual_weight: 0.0
+  
+  scheduler: "cosine"
+  warmup_epochs: 3
+  gradient_clip: 1.0
+  
+# UNet configuration
+unet:
+  in_channels: 4
+  out_channels: 4
+  model_channels: 64
+  channel_mult: [1, 2, 4]
+  num_res_blocks: 2
+  attention_resolutions: [8]
+  dropout: 0.1
+  use_scale_shift_norm: true
+  
+# Diffusion configuration
+diffusion:
+  timesteps: 1000
+  
+  # Test different schedules by changing this
+  beta_schedule: "gamma_rebalanced"  # Testing our novel contribution
+  beta_start: 1.0e-4
+  beta_end: 0.02
+  gamma: 0.75  # Gentler noise schedule for medical images
+  
+  loss_type: "mse"
+  
+  # Novel contributions enabled
+  use_freq_loss: true
+  freq_loss_weight: 0.1
+  freq_loss_type: "mse"
+  
+  use_latent_cutmix: true
+  cutmix_prob: 0.25
+  cutmix_alpha: 1.0
+  
+  batch_size: 16
+  learning_rate: 2.0e-4
+  weight_decay: 0.0
+  training_steps: 30000
+  
+  scheduler: "cosine"
+  warmup_steps: 500
+  gradient_clip: 1.0
+  ema_decay: 0.9999
+  
+  log_interval: 100
+  sample_interval: 1500
+  save_interval: 3000
+  
+# Sampling configuration
+sampling:
+  sampler: "ddim"
+  ddim_steps: 50
+  ddim_eta: 0.0
+  
+  # Novel: Adaptive sampling enabled
+  use_adaptive_sampling: true
+  adaptive_threshold: 0.05
+  adaptive_min_steps: 20
+  
+  num_samples: 16
+  batch_size: 8
+  
+# Evaluation configuration
+eval:
+  compute_fid: true
+  fid_num_samples: 500  # Smaller for faster eval
+  compute_ssim: true
+  compute_psnr: true
+  compute_lpips: false
+  
+  save_samples: true
+  save_reconstructions: true
+  save_error_heatmaps: true
+  num_visualize: 16
+  
+# Hardware optimization
+hardware:
+  mixed_precision: true
+  channels_last: true
+  compile_model: false
+  gradient_checkpointing: false
+  
+# Checkpointing
+checkpoint:
+  save_best: true
+  save_last: true
+  resume: null
+  keep_last_n: 2
