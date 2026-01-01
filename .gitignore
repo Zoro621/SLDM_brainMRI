@@ -56,6 +56,9 @@ checkpoints/
 *.pth
 *.h5
 brain_tumor_dataset/
+yes/
+no/
+report.tex
 data/
 data_*/
 datasets/

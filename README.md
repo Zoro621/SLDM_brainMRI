@@ -7,18 +7,18 @@
 
 A **Kaggle-ready PyTorch implementation** of a scaled-down Slice-By-Slice Lightweight Latent Diffusion Model for 2D medical image synthesis. Optimized for T4/P100 GPUs (16-32GB VRAM).
 
-## 🎯 Key Features
+## Key Features
 
 - **Lightweight VAE**: Configurable encoder-decoder with residual blocks for 4× latent compression
 - **Efficient UNet**: Score prediction network with attention layers and time embeddings
 - **Flexible Sampling**: DDPM, DDIM, and Adaptive sampling strategies
 - **Novel Contributions**:
-  - 🆕 **Noise Rebalancing Schedule**: Gamma-based schedule for enhanced structural preservation
-  - 🆕 **Frequency-Aware Diffusion Loss**: FFT-based loss balancing low/high frequency features
-  - 🆕 **Latent CutMix**: Augmentation strategy in latent space
-  - 🆕 **Adaptive Sampling**: Early-stop sampling based on convergence detection
+    - **Noise Rebalancing Schedule**: Gamma-based schedule for enhanced structural preservation
+    - **Frequency-Aware Diffusion Loss**: FFT-based loss balancing low/high frequency features
+    - **Latent CutMix**: Augmentation strategy in latent space
+    - **Adaptive Sampling**: Early-stop sampling based on convergence detection
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 genAI_project/
@@ -52,7 +52,7 @@ genAI_project/
 └── paper_analysis.md          # Paper analysis and gaps
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -106,7 +106,7 @@ python sample.py --config configs/config_medium.yaml --sampler ddpm --num_sample
 python sample.py --config configs/config_medium.yaml --sampler adaptive --num_samples 16
 ```
 
-## 📊 Priority Experiments
+## Priority Experiments
 
 ### Experiment 1: Debug Run (5-10 minutes on T4)
 **Goal**: Verify pipeline works end-to-end
@@ -152,7 +152,7 @@ python train_diffusion.py --config configs/config_full.yaml \
 ```
 - **Expected improvements**: +2-5% SSIM, +1-2dB PSNR with novel contributions
 
-## ⏱️ Runtime Estimates (Kaggle T4 GPU)
+## Runtime Estimates (Kaggle T4 GPU)
 
 | Configuration | VAE Training | Diffusion Training | Sampling (16 imgs) | Total |
 |--------------|--------------|-------------------|-------------------|-------|
@@ -160,7 +160,7 @@ python train_diffusion.py --config configs/config_full.yaml \
 | Medium | 20-30 min | 1.5-2.5 hrs | 1 min | ~3 hrs |
 | Full | 1-1.5 hrs | 6-10 hrs | 2 min | ~12 hrs |
 
-## 💾 Checkpoint and Resume
+## Checkpoint and Resume
 
 All training scripts support checkpoint/resume:
 
@@ -182,7 +182,7 @@ Checkpoints are saved every N epochs (configurable in YAML) and include:
 - Best validation loss
 - Training configuration
 
-## 📈 Evaluation Metrics
+## Evaluation Metrics
 
 | Metric | Description | Target |
 |--------|-------------|--------|
@@ -199,7 +199,7 @@ psnr = compute_psnr(generated_images, real_images)
 fid = compute_fid(generated_images, real_images, device='cuda')
 ```
 
-## 🔬 Novel Contributions
+## Novel Contributions
 
 ### 1. Noise Rebalancing Schedule (Gamma-based)
 Modifies the standard linear/cosine schedule with a gamma correction to preserve structural information at critical timesteps:
@@ -267,7 +267,7 @@ python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}, Device: {tor
 python tests/smoke_test.py
 ```
 
-## 🗂️ Dataset Preparation
+## Dataset Preparation
 
 ### BraTS Dataset
 ```bash
@@ -308,11 +308,11 @@ If you use this code in your research, please cite:
 }
 ```
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Original SBLDM paper authors
 - PyTorch team
